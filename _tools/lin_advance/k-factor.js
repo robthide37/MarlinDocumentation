@@ -199,7 +199,7 @@ function genGcode() {
                   'G32 ; Tram\n' +
                   'M109 S' + NOZZLE_TEMP + ' ; Wait for nozzle temp\n' +
                   (BED_LEVELING !== '0' ? BED_LEVELING + '; Activate bed leveling compensation\n' : '') +
-                  'M204 P' + ACCELERATION + 'T 2000' ' ; Acceleration\n' +
+                  'M204 P' + ACCELERATION + ' ; Acceleration\n' +
                   (X_JERK !== -1 ? 'M205 X' + X_JERK + ' ; X Jerk\n' : '') +
                   (Y_JERK !== -1 ? 'M205 Y' + Y_JERK + ' ; Y Jerk\n' : '') +
                   (Z_JERK !== -1 ? 'M205 Z' + Z_JERK + ' ; Z Jerk\n' : '') +
