@@ -195,10 +195,11 @@ function genGcode() {
                   'M104 S' + NOZZLE_TEMP + ' ; Set nozzle temperature (no wait)\n' +
                   'M190 S' + BED_TEMP + ' ; Set bed temperature (wait)\n' +
                   'G28 ; Home all axes\n' +
+                  'G32 ; Tram\n' +
                   'G1 Z5 F100 ; Z raise\n' +
                   'M109 S' + NOZZLE_TEMP + ' ; Wait for nozzle temp\n' +
                   (BED_LEVELING !== '0' ? BED_LEVELING + '; Activate bed leveling compensation\n' : '') +
-                  'M204 P' + ACCELERATION + ' ; Acceleration\n' +
+                  'M204 S' + ACCELERATION + ' ; Acceleration\n' +
                   (X_JERK !== -1 ? 'M205 X' + X_JERK + ' ; X Jerk\n' : '') +
                   (Y_JERK !== -1 ? 'M205 Y' + Y_JERK + ' ; Y Jerk\n' : '') +
                   (Z_JERK !== -1 ? 'M205 Z' + Z_JERK + ' ; Z Jerk\n' : '') +
@@ -273,7 +274,7 @@ function genGcode() {
   k_script += ';\n' +
               '; Mark the test area for reference\n' +
               'M117 K0\n' +
-              'M900 K0 ; Set K-factor 0\n' +
+              'SET_PRESSURE_ADVANCE EXTRUDER=EXTRUDER ADVANCE=0 ; Set K-factor 0\n' +
               moveTo(refStartX1, refStartY, basicSettings) +
               doEfeed('+', basicSettings, (USE_FWR ? 'FWR' : 'STD')) +
               createLine(refStartX1, refStartY + 20, 20, basicSettings) +
@@ -467,7 +468,7 @@ function createAltPattern(startX, startY, basicSettings, patSettings) {
 
   for (var i = patSettings['kStart']; i <= patSettings['kEnd']; i += patSettings['kStep']) {
     if (k % 2 === 0) {
-      gcode += 'M900 K' + Math.round10(i, -3) + ' ; set K-factor\n' +
+      gcode += 'SET_PRESSURE_ADVANCE EXTRUDER=EXTRUDER ADVANCE=' + Math.round10(i, -3) + ' ; set K-factor\n' +
                'M117 K' + Math.round10(i, -3) + ' ; \n' +
                createLine(startX + patSettings['lengthSlow'], startY + j, patSettings['lengthSlow'], basicSettings, {'speed': basicSettings['slow']}) +
                createLine(startX + patSettings['lengthSlow'] + patSettings['lengthFast'], startY + j, patSettings['lengthFast'], basicSettings, {'speed': basicSettings['fast']}) +
@@ -476,7 +477,7 @@ function createAltPattern(startX, startY, basicSettings, patSettings) {
       j += patSettings['lineSpacing'];
       k += 1;
     } else if (k % 2 !== 0) {
-      gcode += 'M900 K' + Math.round10(i, -3) + ' ; set K-factor\n' +
+      gcode += 'SET_PRESSURE_ADVANCE EXTRUDER=EXTRUDER ADVANCE=' + Math.round10(i, -3) + ' ; set K-factor\n' +
                'M117 K' + Math.round10(i, -3) + ' ; \n' +
                createLine(startX + patSettings['lengthSlow'] + patSettings['lengthFast'], startY + j, patSettings['lengthSlow'], basicSettings, {'speed': basicSettings['slow']}) +
                createLine(startX + patSettings['lengthSlow'], startY + j, patSettings['lengthFast'], basicSettings, {'speed': basicSettings['fast']}) +
@@ -496,7 +497,7 @@ function createStdPattern(startX, startY, basicSettings, patSettings) {
       gcode = '';
 
   for (var i = patSettings['kStart']; i <= patSettings['kEnd']; i += patSettings['kStep']) {
-    gcode += 'M900 K' + Math.round10(i, -3) + ' ; set K-factor\n' +
+    gcode += 'SET_PRESSURE_ADVANCE EXTRUDER=EXTRUDER ADVANCE=' + Math.round10(i, -3) + ' ; set K-factor\n' +
              'M117 K' + Math.round10(i, -3) + ' ; \n' +
              doEfeed('+', basicSettings, (basicSettings['fwRetract'] ? 'FWR' : 'STD')) +
              createLine(startX + patSettings['lengthSlow'], startY + j, patSettings['lengthSlow'], basicSettings, {'speed': basicSettings['slow']}) +
